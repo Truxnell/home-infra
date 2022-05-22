@@ -1,0 +1,41 @@
+---
+name: Lint - Ansible files
+
+on: # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+    paths:
+      - "ansible/**.yaml"
+      - "ansible/**.yml"
+  pull_request:
+    paths:
+      - "ansible/**.yaml"
+      - "ansible/**.yml"
+
+jobs:
+  main:
+    name: Lint Ansible files
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          list-files: shell
+          filters: |
+            ansible:
+              - added|modified: "ansible/**/*.yaml"
+              - added|modified: "ansible/**/*.yml"
+      - if: ${{ steps.filter.outputs.ansible == 'true' }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - if: ${{ steps.filter.outputs.ansible == 'true' }}
+        uses: reviewdog/action-ansiblelint@v1
+        with:
+          reporter: github-check
+          filter_mode: file
+          ansiblelint_flags: "-c .github/lint/.ansible-lint ${{ steps.filter.outputs.ansible_files }}"
