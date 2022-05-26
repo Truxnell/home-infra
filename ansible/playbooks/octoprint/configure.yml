@@ -29,6 +29,7 @@
       - https://github.com/markwal/OctoPrint-PortLister/archive/master.zip
       - https://github.com/anthonyst91/OctoPrint-Printoid/archive/master.zip
       - https://github.com/OllisGit/OctoPrint-DisplayLayerProgress/releases/latest/download/master.zip
+      - https://github.com/jneilliii/OctoPrint-PrusaSlicerThumbnails/archive/master.zip
 
   vars_prompt:
     - name: reset_config
@@ -55,5 +56,15 @@
 
     - name: "Install vector"
       ansible.builtin.import_role:
-        name: vector
+        name: vector.octoprint
       tags: vector
+
+    - name: "Install acmesh"
+      ansible.builtin.import_role:
+        name: acme_sh.octoprint
+      tags: acme.sh
+
+    - name: "Install node-exporter"
+      ansible.builtin.import_role:
+        name: node_exporter.octoprint
+      tags: node-exporter
