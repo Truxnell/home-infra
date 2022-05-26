@@ -1,0 +1,59 @@
+---
+- hosts: octoprint
+
+  gather_facts: true
+  any_errors_fatal: true
+
+  tags: octoprint
+  remote_user: truxnell
+  become: yes
+
+  vars:
+    octoprint_port: 5000
+    webcam_type: usb
+    os_timezone: "Australia/Melbourne"
+    os_ssh_authorized_keys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZS9J1ydflZ4iJdJgO8+vnN8nNSlEwyn9tbWU9OcysW nat@nat-laptop-fedora"
+    apt_packages_to_install:
+      - python3-dev
+      - avrdude
+    python_packages_to_install:
+      - https://github.com/jneilliii/OctoPrint-ipOnConnect/archive/master.zip
+      - https://github.com/cameroncros/OctoPrint-DiscordRemote/archive/master.zip
+      - https://github.com/tjjfvi/OctoPrint-BetterHeaterTimeout/archive/master.zip
+      - https://github.com/jneilliii/OctoPrint-TPLinkSmartplug/archive/master.zip
+      - https://github.com/j7126/OctoPrint-Dashboard/archive/master.zip
+      - https://github.com/tg44/OctoPrint-Prometheus-Exporter/archive/master.zip
+      - https://github.com/FormerLurker/ArcWelderPlugin/archive/master.zip
+      - https://github.com/OctoPrint/OctoPrint-FirmwareUpdater/archive/master.zip
+      - https://github.com/markwal/OctoPrint-PortLister/archive/master.zip
+      - https://github.com/anthonyst91/OctoPrint-Printoid/archive/master.zip
+      - https://github.com/OllisGit/OctoPrint-DisplayLayerProgress/releases/latest/download/master.zip
+
+  vars_prompt:
+    - name: reset_config
+      prompt: Do you want to reset the Octoprint config? (true/false)?
+      default: false
+      private: no
+
+  tasks:
+    - name: "role: os"
+      ansible.builtin.import_role:
+        name: os.octoprint
+      tags: os
+
+    # # acme
+    - name: "role: octoprint"
+      ansible.builtin.import_role:
+        name: semuadmin.octoprint
+      tags: octoprint
+
+    - name: "Install octoprint plugins"
+      ansible.builtin.import_role:
+        name: pip.octoprint
+      tags: pip
+
+    - name: "Install vector"
+      ansible.builtin.import_role:
+        name: vector
+      tags: vector
