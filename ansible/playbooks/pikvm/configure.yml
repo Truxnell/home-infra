@@ -1,0 +1,36 @@
+---
+- hosts: pikvm
+
+  gather_facts: true
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: Mount read-write
+      ansible.builtin.command: /usr/local/bin/rw
+      tags: always
+
+  tasks:
+    - name: "role: os"
+      ansible.builtin.import_role:
+        name: os
+      tags: os
+
+    - name: "role: acme"
+      ansible.builtin.import_role:
+        name: acme
+      tags: acme
+
+    - name: "role: node-exporter"
+      ansible.builtin.import_role:
+        name: node-exporter
+      tags: node-exporter
+
+    - name: "role: vector"
+      ansible.builtin.import_role:
+        name: vector
+      tags: vector
+
+  post_tasks:
+    - name: Mount read-only
+      ansible.builtin.command: /usr/local/bin/ro
+      tags: always

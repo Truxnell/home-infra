@@ -33,11 +33,7 @@ repos:
           - -c
           - .github/lint/.yamllint.yaml
 
-  - repo: https://github.com/ansible-community/ansible-lint.git
-    rev: v6.2.1
+  - repo: https://github.com/k8s-at-home/sops-pre-commit
+    rev: v2.1.0
     hooks:
-      - id: ansible-lint
-        files: \.(yaml|yml)$
-        args:
-          - -c
-          - .github/lint/.ansible-lint
+      - id: forbid-secrets
